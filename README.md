@@ -1,8 +1,8 @@
-# swsswwssswww_sg
+# swsswwssswww
 > **Sound Wave Super Synthesizer — Waveform Workflow, Signal Sequencing Studio — World Wide Web**  
 > WatanabeShinichiro 向け 高精度PWA音源生成機 (ChromeOS / PC / Mobile)
 
-[![Live Demo](https://img.shields.io/badge/Live_Demo-GitHub_Pages-2ea44f?style=for-the-badge&logo=github)](https://kikuchimakoto.github.io/swsswwssswww_sg/)
+[![Live Demo](https://img.shields.io/badge/Live_Demo-GitHub_Pages-2ea44f?style=for-the-badge&logo=github)](https://kikuchimakoto.github.io/swsswwssswww/)
 [![Bun](https://img.shields.io/badge/Runtime-Bun-f472b6?style=for-the-badge&logo=bun)](https://bun.sh/)
 [![Vite 6](https://img.shields.io/badge/Bundler-Vite_6-646CFF?style=for-the-badge&logo=vite)](https://vitejs.dev/)
 [![React 19](https://img.shields.io/badge/Framework-React_19-61DAFB?style=for-the-badge&logo=react)](https://react.dev/)
@@ -15,7 +15,7 @@
 
 ## 🔗 Live Demo
 ブラウザから直接インストール・動作確認が可能です：  
-👉 **[https://kikuchimakoto.github.io/swsswwssswww_sg/](https://kikuchimakoto.github.io/swsswwssswww_sg/)**
+👉 **[https://kikuchimakoto.github.io/swsswwssswww/](https://kikuchimakoto.github.io/swsswwssswww/)**
 
 ---
 
@@ -143,7 +143,7 @@
 ## 📁 ディレクトリ構成 (Project Structure)
 
 ```text
-swsswwssswww_sg/
+swsswwssswww/
 ├── .github/                      # GitHub設定
 ├── public/                       # 静的配信アセット
 │   ├── .nojekyll                 # GitHub PagesでのJekyll処理防止ファイル
@@ -196,8 +196,8 @@ swsswwssswww_sg/
 
 ### 1. リポジトリのクローン & 依存パッケージのインストール
 ```bash
-git clone https://github.com/KikuchiMakoto/swsswwssswww_sg.git
-cd swsswwssswww_sg
+git clone https://github.com/KikuchiMakoto/swsswwssswww.git
+cd swsswwssswww
 bun install
 ```
 
@@ -260,7 +260,7 @@ bun run deploy
 
 - **作者 (Author)**: Makoto KUNO
 - **メール (Email)**: [mkt755778@gmail.com](mailto:mkt755778@gmail.com)
-- **リポジトリ (Repository)**: [https://github.com/KikuchiMakoto/swsswwssswww_sg](https://github.com/KikuchiMakoto/swsswwssswww_sg)
+- **リポジトリ (Repository)**: [https://github.com/KikuchiMakoto/swsswwssswww](https://github.com/KikuchiMakoto/swsswwssswww)
 
 ---
 

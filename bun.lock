@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "swsswwssswww_sg",
+      "name": "swsswwssswww",
       "dependencies": {
         "lucide-react": "^1.64.0",
         "react": "^19.3.1",
