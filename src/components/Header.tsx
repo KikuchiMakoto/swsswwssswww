@@ -65,7 +65,7 @@ export const Header: React.FC<HeaderProps> = ({
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-lg sm:text-xl font-bold tracking-tight text-white">
-                Sound Generator
+                Sound Wave Synthesis Studio
               </h1>
               <span
                 className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono font-medium cursor-help"

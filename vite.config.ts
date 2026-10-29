@@ -11,7 +11,7 @@ export default defineConfig({
       includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'pwa-192x192.png', 'pwa-512x512.png'],
       manifest: {
         name: 'swsswwssswww - Sound Wave Super Synthesizer (for WatanabeShinichiro)',
-        short_name: 'swsswwssswww',
+        short_name: 'Sound Wave Synthesis Studio',
         description: 'Sound Wave Super Synthesizer — Waveform Workflow, Signal Sequencing Studio — World Wide Web (for WatanabeShinichiro)',
         theme_color: '#090d16',
         background_color: '#090d16',
