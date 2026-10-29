@@ -56,10 +56,10 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className="w-full bg-slate-900/90 backdrop-blur-md border-b border-slate-800 sticky top-0 z-40 transition-colors">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 min-h-16 py-2 flex items-center justify-between gap-4">
         {/* Brand / Title */}
         <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/20 to-emerald-500/20 border border-slate-700/60 text-emerald-400 shadow-inner">
+          <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/20 to-emerald-500/20 border border-slate-700/60 text-emerald-400 shadow-inner shrink-0">
             <Waves className="w-5 h-5 text-emerald-400" />
           </div>
           <div>
@@ -67,17 +67,19 @@ export const Header: React.FC<HeaderProps> = ({
               <h1 className="text-lg sm:text-xl font-bold tracking-tight text-white">
                 Sound Generator
               </h1>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono font-medium">
+              <span
+                className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono font-medium cursor-help"
+                title="Sound Wave Super Synthesizer — Waveform Workflow, Signal Sequencing Studio — World Wide Web"
+              >
                 swsswwssswww
               </span>
               <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-slate-800 text-slate-300 border border-slate-700/60 hidden sm:inline-block">
                 音源生成機
               </span>
             </div>
-            <p className="text-xs text-slate-400 flex items-center gap-1.5">
-              <span className="text-emerald-400 font-medium">for WatanabeShinichiro</span>
-              <span className="text-slate-600 hidden sm:inline">•</span>
-              <span className="hidden sm:inline">Web Audio Precision Oscillator & Synthesizer</span>
+            <p className="text-[11px] sm:text-xs text-slate-400 font-mono tracking-tight leading-tight mt-0.5">
+              <span>Sound Wave Super Synthesizer — Waveform Workflow, Signal Sequencing Studio — World Wide Web</span>{' '}
+              <span className="text-emerald-400 font-sans font-medium whitespace-nowrap">(for WatanabeShinichiro)</span>
             </p>
           </div>
         </div>

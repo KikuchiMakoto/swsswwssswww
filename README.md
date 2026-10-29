@@ -1,6 +1,6 @@
-# swsswwssswww - WatanabeShinichiro 向け 音源生成機 (Sound Generator) 🎵
-
-swsswwssswww - WatanabeShinichiro 向け ChromeOS・PC・スマートフォン対応の高精度PWA音源生成機（Web Audio API Precision Tone Generator）
+# swsswwssswww_sg
+> **Sound Wave Super Synthesizer — Waveform Workflow, Signal Sequencing Studio — World Wide Web**  
+> WatanabeShinichiro 向け 高精度PWA音源生成機 (ChromeOS / PC / Mobile)
 
 [![Live Demo](https://img.shields.io/badge/Live_Demo-GitHub_Pages-2ea44f?style=for-the-badge&logo=github)](https://kikuchimakoto.github.io/swsswwssswww_sg/)
 [![Bun](https://img.shields.io/badge/Runtime-Bun-f472b6?style=for-the-badge&logo=bun)](https://bun.sh/)
@@ -16,6 +16,36 @@ swsswwssswww - WatanabeShinichiro 向け ChromeOS・PC・スマートフォン�
 ## 🔗 Live Demo
 ブラウザから直接インストール・動作確認が可能です：  
 👉 **[https://kikuchimakoto.github.io/swsswwssswww_sg/](https://kikuchimakoto.github.io/swsswwssswww_sg/)**
+
+---
+
+## 🏷️ バックロニム定義 (12-Letter Backronym Breakdown)
+
+本プロジェクトの名称 **`swsswwssswww`**（全12文字）は、以下の正式バックロニム（Backronym）を表しています：
+
+> **Sound Wave Super Synthesizer — Waveform Workflow, Signal Sequencing Studio — World Wide Web**
+
+### 構成セグメント (3 Segments)
+- **`SWSS`**: **Sound Wave Super Synthesizer**（サイン波・三角波・矩形波・スイープを発振する高精度Web Audioシンセサイザーコア）
+- **`WWSSS`**: **Waveform Workflow, Signal Sequencing Studio**（波形・シーケンス・バースト・オシロスコープ統合スタジオ環境）
+- **`WWW`**: **World Wide Web**（ブラウザ・ChromeOS・PC・スマートフォンで即座に動作するPWA / Web Audio API ネイティブ実装）
+
+### 12文字の対応表 (Letter Correspondence)
+
+| 位置 | 文字 | 対応単語 (Word) | セグメント |
+| :---: | :---: | :--- | :--- |
+| 1 | **S** | Sound | **SWSS** (Sound Wave Super Synthesizer) |
+| 2 | **W** | Wave | |
+| 3 | **S** | Super | |
+| 4 | **S** | Synthesizer | |
+| 5 | **W** | Waveform | **WWSSS** (Waveform Workflow, Signal Sequencing Studio) |
+| 6 | **W** | Workflow | |
+| 7 | **S** | Signal | |
+| 8 | **S** | Sequencing | |
+| 9 | **S** | Studio | |
+| 10 | **W** | World | **WWW** (World Wide Web) |
+| 11 | **W** | Wide | |
+| 12 | **W** | Web | |
 
 ---
 
