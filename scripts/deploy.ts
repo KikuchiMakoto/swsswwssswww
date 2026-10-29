@@ -17,7 +17,7 @@ function runCapture(command: string, cwd: string = projectRoot): string {
 console.log('🚀 Starting single-commit GitHub Pages deployment...');
 
 // 1. Determine remote origin URL
-let remoteUrl = 'https://github.com/KikuchiMakoto/soundgen.git';
+let remoteUrl = 'https://github.com/KikuchiMakoto/swsswwssswww_sg.git';
 try {
   const detected = runCapture('git config --get remote.origin.url', projectRoot);
   if (detected) {
