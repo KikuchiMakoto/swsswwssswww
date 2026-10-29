@@ -1,8 +1,26 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Volume2, Play, Square, Music } from 'lucide-react';
+import { audioEngine } from './audio';
 
 export default function App() {
   const [isPlaying, setIsPlaying] = useState(false);
+
+  useEffect(() => {
+    audioEngine.onPlayStateChanged = (playing) => {
+      setIsPlaying(playing);
+    };
+    return () => {
+      audioEngine.onPlayStateChanged = undefined;
+    };
+  }, []);
+
+  const togglePlay = async () => {
+    if (isPlaying) {
+      audioEngine.stop();
+    } else {
+      await audioEngine.play();
+    }
+  };
 
   return (
     <main className="min-h-screen bg-slate-900 text-slate-100 flex flex-col items-center justify-center p-6">
@@ -22,8 +40,8 @@ export default function App() {
         <div className="pt-2">
           <button
             type="button"
-            onClick={() => setIsPlaying((prev) => !prev)}
-            className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium transition-colors ${
+            onClick={togglePlay}
+            className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium transition-colors cursor-pointer ${
               isPlaying
                 ? 'bg-rose-600 hover:bg-rose-700 text-white'
                 : 'bg-indigo-600 hover:bg-indigo-700 text-white'
