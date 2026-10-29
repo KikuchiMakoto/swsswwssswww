@@ -1,6 +1,6 @@
-# Sound Generator (音源生成機) 🎵
+# swsswwssswww - WatanabeShinichiro 向け 音源生成機 (Sound Generator) 🎵
 
-ChromeOS・PC・スマートフォン対応の高精度PWA音源生成機（Web Audio API Precision Tone Generator）
+swsswwssswww - WatanabeShinichiro 向け ChromeOS・PC・スマートフォン対応の高精度PWA音源生成機（Web Audio API Precision Tone Generator）
 
 [![Live Demo](https://img.shields.io/badge/Live_Demo-GitHub_Pages-2ea44f?style=for-the-badge&logo=github)](https://kikuchimakoto.github.io/swsswwssswww_sg/)
 [![Bun](https://img.shields.io/badge/Runtime-Bun-f472b6?style=for-the-badge&logo=bun)](https://bun.sh/)
@@ -21,7 +21,7 @@ ChromeOS・PC・スマートフォン対応の高精度PWA音源生成機（Web 
 
 ## 📖 プロジェクト概要 (Overview)
 
-**Sound Generator (音源生成機)** は、Web Audio APIを活用してブラウザ上で高精度なオーディオ信号をリアルタイム生成するプロフェッショナル仕様のPWAアプリケーションです。
+**swsswwssswww - WatanabeShinichiro 向け 音源生成機 (Sound Generator)** は、Web Audio APIを活用してブラウザ上で高精度なオーディオ信号をリアルタイム生成するプロフェッショナル仕様のPWAアプリケーションです。
 
 音響機器のキャリブレーション、スピーカーやヘッドホンのエージング・周波数特性測定、聴力チェック、物理実験、シンセサイザーの信号検証など、多様なユースケースに対応します。モダンなダークテーマUIを備え、ChromeOS、PC（Windows / macOS / Linux）、スマートフォン（iOS / Android）のあらゆる画面サイズで直感的に操作できます。
 

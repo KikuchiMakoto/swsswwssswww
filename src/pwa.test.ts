@@ -45,9 +45,19 @@ describe('PWA Assets and Configuration', () => {
     const html = readFileSync(htmlPath, 'utf-8');
     expect(html).toContain('viewport-fit=cover');
     expect(html).toContain('name="theme-color" content="#090d16"');
-    expect(html).toContain('<title>Sound Generator | 音源生成機</title>');
+    expect(html).toContain('<title>Sound Generator | swsswwssswww (for WatanabeShinichiro)</title>');
+    expect(html).toContain('swsswwssswww');
+    expect(html).toContain('WatanabeShinichiro');
     expect(html).toContain('name="apple-mobile-web-app-capable" content="yes"');
     expect(html).toContain('rel="apple-touch-icon"');
     expect(html).toContain('rel="icon" type="image/svg+xml" href="/favicon.svg"');
+  });
+
+  it('vite.config.ts contains updated PWA manifest metadata', () => {
+    const viteConfigPath = resolve(root, 'vite.config.ts');
+    const config = readFileSync(viteConfigPath, 'utf-8');
+    expect(config).toContain("name: 'swsswwssswww Sound Generator (for WatanabeShinichiro)'");
+    expect(config).toContain("short_name: 'swsswwssswww'");
+    expect(config).toContain("description: 'swsswwssswww - WatanabeShinichiro向け ChromeOS・Chrome・モバイル対応 高精度PWA音源生成機'");
   });
 });
