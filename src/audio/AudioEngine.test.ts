@@ -156,7 +156,7 @@ describe('AudioEngine', () => {
     expect(stopped).toBe(true);
   });
 
-  it('provides frequency and time domain data from analyser', () => {
+  it('provides frequency, time domain, and analyser data', () => {
     const engine = new AudioEngine({}, mockCtx);
     const freqData = engine.getFrequencyData();
     expect(freqData.length).toBe(1024);
@@ -165,6 +165,10 @@ describe('AudioEngine', () => {
     const timeData = engine.getTimeDomainData();
     expect(timeData.length).toBe(1024);
     expect(timeData[0]).toBe(128);
+
+    const analyserData = engine.getAnalyserData();
+    expect(analyserData.length).toBe(1024);
+    expect(analyserData[0]).toBe(128);
   });
 
   it('getInstance returns a singleton instance', () => {

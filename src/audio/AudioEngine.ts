@@ -127,6 +127,13 @@ export class AudioEngine {
   }
 
   /**
+   * Alias for getTimeDomainData for oscilloscope / waveform display
+   */
+  public getAnalyserData(target?: Uint8Array): Uint8Array {
+    return this.getTimeDomainData(target);
+  }
+
+  /**
    * Starts playback based on the current AudioConfig.
    */
   public async play(): Promise<void> {
