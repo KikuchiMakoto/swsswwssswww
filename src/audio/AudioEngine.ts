@@ -1,5 +1,5 @@
 import { AudioConfig } from './types';
-import { clampAudioConfig } from './utils';
+import { clampAudioConfig, calculateCycleDuration } from './utils';
 
 export class AudioEngine {
   private static instance: AudioEngine | null = null;
@@ -242,6 +242,42 @@ export class AudioEngine {
   }
 
   /**
+   * Calculates the active duration of a burst based on burstUnit ('cycles' or 'time').
+   * If 'cycles', active duration = burstCycles / effectiveFrequency.
+   * If sweep: effectiveFrequency = (sweepStartFreq + sweepEndFreq) / 2.
+   * If 'time', active duration = burstActiveDuration.
+   */
+  public getBurstActiveDuration(): number {
+    if (this._config.burstUnit === 'cycles') {
+      const effectiveFreq =
+        this._config.waveform === 'sweep'
+          ? Math.max(20, (this._config.sweepStartFreq + this._config.sweepEndFreq) / 2)
+          : Math.max(20, this._config.frequency);
+      return calculateCycleDuration(this._config.burstCycles, effectiveFreq);
+    }
+    return this._config.burstActiveDuration;
+  }
+
+  /**
+   * Calculates the duration of a oneshot sound in seconds.
+   * Supports oneshotUnit === 'cycles' (or oneshotCycles), or burstUnit / burstCycles if 1 wave is desired.
+   */
+  public getOneshotDuration(): number {
+    const isSweep = this._config.waveform === 'sweep';
+    const isCycles =
+      this._config.oneshotUnit === 'cycles' ||
+      (this._config.oneshotUnit === undefined && this._config.oneshotCycles !== undefined);
+    if (isCycles) {
+      const cycles = this._config.oneshotCycles ?? this._config.burstCycles ?? 1;
+      const effectiveFreq = isSweep
+        ? Math.max(20, (this._config.sweepStartFreq + this._config.sweepEndFreq) / 2)
+        : Math.max(20, this._config.frequency);
+      return calculateCycleDuration(cycles, effectiveFreq);
+    }
+    return isSweep ? this._config.sweepDuration : this._config.oneshotDuration;
+  }
+
+  /**
    * Periodic burst loop scheduling
    */
   private scheduleNextBurst(startTime: number): void {
@@ -249,10 +285,10 @@ export class AudioEngine {
     if (this._config.playMode !== 'burst') return;
 
     const actualStart = Math.max(startTime, this.ctx.currentTime + 0.002);
-    const active = this._config.burstActiveDuration;
+    const active = this.getBurstActiveDuration();
     const pause = this._config.burstPauseDuration;
     const cycleDuration = active + pause;
-    const ramp = Math.min(0.005, active / 4);
+    const ramp = Math.min(0.0005, active * 0.1);
 
     // Pulse envelope on gate gain
     this.gateGain.gain.setValueAtTime(0, actualStart);
@@ -284,8 +320,11 @@ export class AudioEngine {
 
     const actualStart = Math.max(startTime, this.ctx.currentTime + 0.002);
     const isSweep = this._config.waveform === 'sweep';
-    const duration = isSweep ? this._config.sweepDuration : this._config.oneshotDuration;
-    const ramp = Math.min(0.01, duration / 4);
+    const isCycles =
+      this._config.oneshotUnit === 'cycles' ||
+      (this._config.oneshotUnit === undefined && this._config.oneshotCycles !== undefined);
+    const duration = this.getOneshotDuration();
+    const ramp = isCycles ? Math.min(0.0005, duration * 0.1) : Math.min(0.01, duration / 4);
 
     // Gate gain envelope
     this.gateGain.gain.setValueAtTime(0, actualStart);
@@ -423,6 +462,29 @@ export class AudioEngine {
     const isPlayModeChanged = prevConfig.playMode !== this._config.playMode;
 
     if (isPlayModeChanged || isSweepModeChanged) {
+      this.restartCurrentVoice();
+      return;
+    }
+
+    // If burst parameters changed while in burst mode, restart voice seamlessly
+    if (
+      this._config.playMode === 'burst' &&
+      (newConfig.burstUnit !== undefined ||
+        newConfig.burstCycles !== undefined ||
+        newConfig.burstActiveDuration !== undefined ||
+        newConfig.burstPauseDuration !== undefined)
+    ) {
+      this.restartCurrentVoice();
+      return;
+    }
+
+    // If oneshot parameters changed while in oneshot mode, restart voice seamlessly
+    if (
+      this._config.playMode === 'oneshot' &&
+      (newConfig.oneshotUnit !== undefined ||
+        newConfig.oneshotCycles !== undefined ||
+        newConfig.oneshotDuration !== undefined)
+    ) {
       this.restartCurrentVoice();
       return;
     }

@@ -5,6 +5,9 @@ import {
   sliderToFrequency,
   AUDIO_BOUNDS,
   clamp,
+  formatDuration,
+  durationToSlider,
+  sliderToDuration,
 } from '../audio';
 import { ArrowLeftRight, TrendingUp, Clock, Scale } from 'lucide-react';
 
@@ -20,6 +23,17 @@ interface SweepControlsProps {
   onSwap: () => void;
   disabled?: boolean;
 }
+
+const SWEEP_DURATION_PRESETS = [
+  { label: '1秒', value: 1.0 },
+  { label: '2秒', value: 2.0 },
+  { label: '5秒', value: 5.0 },
+  { label: '10秒', value: 10.0 },
+  { label: '30秒', value: 30.0 },
+  { label: '1分', value: 60.0 },
+  { label: '5分', value: 300.0 },
+  { label: '10分 (600s)', value: 600.0 },
+];
 
 export const SweepControls: React.FC<SweepControlsProps> = ({
   startFreq,
@@ -78,7 +92,10 @@ export const SweepControls: React.FC<SweepControlsProps> = ({
   const commitDuration = (valStr: string) => {
     const val = parseFloat(valStr);
     if (!isNaN(val)) {
-      const clamped = Math.round(clamp(val, 0.1, 10.0) * 10) / 10;
+      const clamped =
+        Math.round(
+          clamp(val, AUDIO_BOUNDS.sweepDuration.min, AUDIO_BOUNDS.sweepDuration.max) * 10
+        ) / 10;
       onDurationChange(clamped);
       setDurationInput(clamped.toString());
     } else {
@@ -216,10 +233,10 @@ export const SweepControls: React.FC<SweepControlsProps> = ({
 
       {/* Sweep Duration & Scale Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-        {/* Sweep Duration (0.1s - 10s) */}
-        <div className="space-y-2 p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80">
+        {/* Sweep Duration (0.1s - 600.0s / 10分) */}
+        <div className="space-y-2.5 p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 flex-wrap">
               <Clock className="w-3.5 h-3.5 text-indigo-400" />
               <label
                 htmlFor="duration-input"
@@ -227,13 +244,16 @@ export const SweepControls: React.FC<SweepControlsProps> = ({
               >
                 スイープ時間 (Duration)
               </label>
+              <span className="text-[11px] font-mono font-bold text-indigo-400 bg-indigo-500/10 px-1.5 py-0.5 rounded border border-indigo-500/20">
+                {formatDuration(duration)}
+              </span>
             </div>
             <div className="relative flex items-center">
               <input
                 id="duration-input"
                 type="number"
-                min="0.1"
-                max="10"
+                min={AUDIO_BOUNDS.sweepDuration.min}
+                max={AUDIO_BOUNDS.sweepDuration.max}
                 step="0.1"
                 value={durationInput}
                 disabled={disabled}
@@ -245,7 +265,7 @@ export const SweepControls: React.FC<SweepControlsProps> = ({
                     (e.target as HTMLInputElement).blur();
                   }
                 }}
-                className="w-20 h-8 px-2 pr-6 rounded bg-slate-900 border border-slate-700 text-right font-mono text-xs font-semibold text-white focus:outline-none focus:border-indigo-500"
+                className="w-24 h-8 px-2 pr-6 rounded bg-slate-900 border border-slate-700 text-right font-mono text-xs font-semibold text-white focus:outline-none focus:border-indigo-500"
               />
               <span className="absolute right-2 text-[10px] text-slate-400 font-mono pointer-events-none">
                 s
@@ -254,19 +274,53 @@ export const SweepControls: React.FC<SweepControlsProps> = ({
           </div>
           <input
             type="range"
-            min="0.1"
-            max="10.0"
+            min="0"
+            max="100"
             step="0.1"
-            value={duration}
+            value={durationToSlider(duration, AUDIO_BOUNDS.sweepDuration.min, AUDIO_BOUNDS.sweepDuration.max)}
             disabled={disabled}
-            onChange={(e) => onDurationChange(parseFloat(e.target.value))}
+            onChange={(e) => {
+              const sec = sliderToDuration(
+                parseFloat(e.target.value),
+                AUDIO_BOUNDS.sweepDuration.min,
+                AUDIO_BOUNDS.sweepDuration.max
+              );
+              onDurationChange(sec);
+            }}
             aria-label="スイープ時間スライダー"
             className="w-full h-2.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-indigo-500 focus:outline-none disabled:opacity-40"
           />
           <div className="flex justify-between text-[10px] font-mono text-slate-400">
             <span>0.1s</span>
-            <span>5.0s</span>
-            <span>10.0s</span>
+            <span>1秒</span>
+            <span>10秒</span>
+            <span>1分</span>
+            <span>10分 (600s)</span>
+          </div>
+
+          {/* Quick presets: [1秒], [2秒], [5秒], [10秒], [30秒], [1分], [5分], [10分 (600s)] */}
+          <div className="space-y-1 pt-1">
+            <div className="text-[10px] text-slate-400 font-medium">クイックプリセット</div>
+            <div className="flex flex-wrap gap-1.5">
+              {SWEEP_DURATION_PRESETS.map((preset) => {
+                const isActive = Math.abs(duration - preset.value) < 0.01;
+                return (
+                  <button
+                    key={preset.value}
+                    type="button"
+                    disabled={disabled}
+                    onClick={() => onDurationChange(preset.value)}
+                    className={`px-2 py-1 rounded text-[11px] font-mono transition-all cursor-pointer ${
+                      isActive
+                        ? 'bg-indigo-600 border border-indigo-400 text-white font-semibold shadow-sm'
+                        : 'bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-300'
+                    }`}
+                  >
+                    {preset.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
 

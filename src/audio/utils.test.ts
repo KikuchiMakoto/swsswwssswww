@@ -9,8 +9,13 @@ import {
   dbToVolume,
   clamp,
   clampAudioConfig,
+  calculateCycleDuration,
+  calculateEquivalentCycles,
+  formatDuration,
+  durationToSlider,
+  sliderToDuration,
 } from './utils';
-import { DEFAULT_AUDIO_CONFIG, WaveformType, PlayMode, SweepScale } from './types';
+import { DEFAULT_AUDIO_CONFIG, WaveformType, PlayMode, SweepScale, BurstUnit } from './types';
 
 describe('frequency mapping (logarithmic)', () => {
   it('maps boundary frequencies correctly', () => {
@@ -129,23 +134,23 @@ describe('clampAudioConfig', () => {
     expect(clamped.sweepEndFreq).toBe(20000);
   });
 
-  it('clamps sweep duration within [0.1, 30.0]', () => {
+  it('clamps sweep duration within [0.1, 600.0]', () => {
     const low = clampAudioConfig({ sweepDuration: 0.02 });
     expect(low.sweepDuration).toBe(0.1);
 
-    const high = clampAudioConfig({ sweepDuration: 45.0 });
-    expect(high.sweepDuration).toBe(30.0);
+    const high = clampAudioConfig({ sweepDuration: 700.0 });
+    expect(high.sweepDuration).toBe(600.0);
 
-    const valid = clampAudioConfig({ sweepDuration: 3.5 });
-    expect(valid.sweepDuration).toBe(3.5);
+    const valid = clampAudioConfig({ sweepDuration: 300.0 });
+    expect(valid.sweepDuration).toBe(300.0);
   });
 
-  it('clamps burst active and pause durations within [0.01, 5.0]', () => {
+  it('clamps burst active and pause durations within valid bounds', () => {
     const low = clampAudioConfig({
-      burstActiveDuration: 0.001,
+      burstActiveDuration: 0.0005,
       burstPauseDuration: 0.002,
     });
-    expect(low.burstActiveDuration).toBe(0.01);
+    expect(low.burstActiveDuration).toBe(0.001);
     expect(low.burstPauseDuration).toBe(0.01);
 
     const high = clampAudioConfig({
@@ -156,12 +161,15 @@ describe('clampAudioConfig', () => {
     expect(high.burstPauseDuration).toBe(5.0);
   });
 
-  it('clamps oneshot duration within [0.05, 30.0]', () => {
+  it('clamps oneshot duration within [0.05, 600.0]', () => {
     const low = clampAudioConfig({ oneshotDuration: 0.01 });
     expect(low.oneshotDuration).toBe(0.05);
 
-    const high = clampAudioConfig({ oneshotDuration: 100 });
-    expect(high.oneshotDuration).toBe(30.0);
+    const high = clampAudioConfig({ oneshotDuration: 800 });
+    expect(high.oneshotDuration).toBe(600.0);
+
+    const valid = clampAudioConfig({ oneshotDuration: 300.0 });
+    expect(valid.oneshotDuration).toBe(300.0);
   });
 
   it('clamps volume within [0, 1.0]', () => {
@@ -197,10 +205,142 @@ describe('clampAudioConfig', () => {
       waveform: 'square',
       playMode: 'burst',
       sweepScale: 'linear',
+      burstUnit: 'time',
     });
 
     expect(validConfig.waveform).toBe('square');
     expect(validConfig.playMode).toBe('burst');
     expect(validConfig.sweepScale).toBe('linear');
+    expect(validConfig.burstUnit).toBe('time');
+  });
+
+  it('validates burstUnit and falls back to cycles default on invalid input', () => {
+    const invalidConfig = clampAudioConfig({
+      burstUnit: 'samples' as unknown as BurstUnit,
+    });
+    expect(invalidConfig.burstUnit).toBe('cycles');
+  });
+
+  it('validates burstCycles as integer within [1, 10000] and defaults to 1 wave', () => {
+    const defaultConfig = clampAudioConfig({});
+    expect(defaultConfig.burstUnit).toBe('cycles');
+    expect(defaultConfig.burstCycles).toBe(1);
+
+    const low = clampAudioConfig({ burstCycles: 0 });
+    expect(low.burstCycles).toBe(1);
+
+    const negative = clampAudioConfig({ burstCycles: -10 });
+    expect(negative.burstCycles).toBe(1);
+
+    const high = clampAudioConfig({ burstCycles: 20000 });
+    expect(high.burstCycles).toBe(10000);
+
+    const rounded = clampAudioConfig({ burstCycles: 5.7 });
+    expect(rounded.burstCycles).toBe(6);
+
+    const valid = clampAudioConfig({ burstCycles: 10 });
+    expect(valid.burstCycles).toBe(10);
+  });
+
+  it('validates oneshotUnit and oneshotCycles when specified', () => {
+    const cycleOneshot = clampAudioConfig({
+      oneshotUnit: 'cycles',
+      oneshotCycles: 3.2,
+    });
+    expect(cycleOneshot.oneshotUnit).toBe('cycles');
+    expect(cycleOneshot.oneshotCycles).toBe(3);
+
+    const timeOneshot = clampAudioConfig({
+      oneshotUnit: 'time',
+    });
+    expect(timeOneshot.oneshotUnit).toBe('time');
+  });
+});
+
+describe('calculateCycleDuration and calculateEquivalentCycles', () => {
+  it('calculates cycle duration accurately (cycles / freq)', () => {
+    expect(calculateCycleDuration(1, 440)).toBeCloseTo(1 / 440, 6);
+    expect(calculateCycleDuration(10, 1000)).toBe(0.01);
+    expect(calculateCycleDuration(5, 100)).toBe(0.05);
+  });
+
+  it('handles zero or negative or invalid frequency safely', () => {
+    expect(calculateCycleDuration(1, 0)).toBe(0);
+    expect(calculateCycleDuration(1, -100)).toBe(0);
+    expect(calculateCycleDuration(1, NaN)).toBe(0);
+    expect(calculateCycleDuration(NaN, 440)).toBe(0);
+  });
+
+  it('calculates equivalent cycles (durationSec * freq)', () => {
+    expect(calculateEquivalentCycles(0.1, 440)).toBe(44);
+    expect(calculateEquivalentCycles(0.01, 1000)).toBe(10);
+    expect(calculateEquivalentCycles(0.002, 500)).toBe(1);
+  });
+
+  it('handles invalid numbers in calculateEquivalentCycles safely', () => {
+    expect(calculateEquivalentCycles(NaN, 440)).toBe(0);
+    expect(calculateEquivalentCycles(0.1, NaN)).toBe(0);
+  });
+
+  it('round-trips cycle duration and equivalent cycles', () => {
+    const cycles = 5;
+    const freq = 440;
+    const duration = calculateCycleDuration(cycles, freq);
+    const recoveredCycles = calculateEquivalentCycles(duration, freq);
+    expect(recoveredCycles).toBeCloseTo(cycles, 5);
+  });
+});
+
+describe('formatDuration helper', () => {
+  it('formats durations >= 60 seconds correctly', () => {
+    expect(formatDuration(60)).toBe('1分00秒 (60.0s)');
+    expect(formatDuration(600)).toBe('10分00秒 (600.0s)');
+    expect(formatDuration(180)).toBe('3分00秒 (180.0s)');
+    expect(formatDuration(300)).toBe('5分00秒 (300.0s)');
+    expect(formatDuration(65)).toBe('1分05秒 (65.0s)');
+  });
+
+  it('formats durations < 60 seconds correctly', () => {
+    expect(formatDuration(1.0)).toBe('1.0秒');
+    expect(formatDuration(2.0)).toBe('2.0秒');
+    expect(formatDuration(5.0)).toBe('5.0秒');
+    expect(formatDuration(10.0)).toBe('10.0秒');
+    expect(formatDuration(30.0)).toBe('30.0秒');
+    expect(formatDuration(0.05)).toBe('0.05秒 (50ms)');
+    expect(formatDuration(0.1)).toBe('0.1秒 (100ms)');
+    expect(formatDuration(0.5)).toBe('0.5秒 (500ms)');
+  });
+
+  it('handles zero or invalid numbers safely', () => {
+    expect(formatDuration(0)).toBe('0.0秒');
+    expect(formatDuration(-1)).toBe('0.0秒');
+    expect(formatDuration(NaN)).toBe('0.0秒');
+  });
+});
+
+describe('duration slider mapping (logarithmic)', () => {
+  it('maps boundary durations correctly', () => {
+    expect(durationToSlider(0.05, 0.05, 600)).toBe(0);
+    expect(durationToSlider(600, 0.05, 600)).toBe(100);
+
+    expect(sliderToDuration(0, 0.05, 600)).toBe(0.05);
+    expect(sliderToDuration(100, 0.05, 600)).toBe(600);
+  });
+
+  it('distributes common durations well across the slider', () => {
+    // 1.0s should be around 30-35%
+    const slider1s = durationToSlider(1.0, 0.05, 600);
+    expect(slider1s).toBeGreaterThan(25);
+    expect(slider1s).toBeLessThan(40);
+
+    // 10s should be around 50-60%
+    const slider10s = durationToSlider(10.0, 0.05, 600);
+    expect(slider10s).toBeGreaterThan(50);
+    expect(slider10s).toBeLessThan(65);
+
+    // 60s should be around 70-80%
+    const slider60s = durationToSlider(60.0, 0.05, 600);
+    expect(slider60s).toBeGreaterThan(70);
+    expect(slider60s).toBeLessThan(80);
   });
 });

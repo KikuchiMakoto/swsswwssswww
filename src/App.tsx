@@ -116,8 +116,17 @@ export default function App() {
             {/* Burst Parameters (Visible in Burst Mode) */}
             {config.playMode === 'burst' && (
               <BurstControls
+                unit={config.burstUnit}
+                cycles={config.burstCycles}
                 activeDuration={config.burstActiveDuration}
                 pauseDuration={config.burstPauseDuration}
+                frequency={
+                  config.waveform === 'sweep'
+                    ? (config.sweepStartFreq + config.sweepEndFreq) / 2
+                    : config.frequency
+                }
+                onUnitChange={(unit) => handleConfigChange({ burstUnit: unit })}
+                onCyclesChange={(cycles) => handleConfigChange({ burstCycles: cycles })}
                 onActiveDurationChange={(sec) =>
                   handleConfigChange({ burstActiveDuration: sec })
                 }
@@ -131,7 +140,13 @@ export default function App() {
             {config.playMode === 'oneshot' && config.waveform !== 'sweep' && (
               <OneShotControls
                 duration={config.oneshotDuration}
+                unit={config.oneshotUnit ?? 'time'}
+                cycles={config.oneshotCycles ?? 1}
+                frequency={config.frequency}
+                onDurationChange={(sec) => handleConfigChange({ oneshotDuration: sec })}
                 onChange={(sec) => handleConfigChange({ oneshotDuration: sec })}
+                onUnitChange={(unit) => handleConfigChange({ oneshotUnit: unit })}
+                onCyclesChange={(cycles) => handleConfigChange({ oneshotCycles: cycles })}
               />
             )}
 

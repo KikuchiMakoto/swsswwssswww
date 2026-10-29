@@ -123,6 +123,7 @@ describe('AudioEngine', () => {
     const engine = new AudioEngine(
       {
         playMode: 'burst',
+        burstUnit: 'time',
         burstActiveDuration: 0.1,
         burstPauseDuration: 0.1,
       },
@@ -132,6 +133,137 @@ describe('AudioEngine', () => {
     await engine.play();
     expect(engine.isPlaying).toBe(true);
     engine.stop();
+  });
+
+  it('calculates cycle-based burst active duration with 1-wave default', () => {
+    // Default config has burstUnit: 'cycles' and burstCycles: 1
+    const engine = new AudioEngine({ playMode: 'burst', frequency: 1000 }, mockCtx);
+    expect(engine.config.burstUnit).toBe('cycles');
+    expect(engine.config.burstCycles).toBe(1);
+    // At 1000 Hz, 1 cycle = 0.001 s (1 ms)
+    expect(engine.getBurstActiveDuration()).toBeCloseTo(0.001, 6);
+
+    // At default 440 Hz, 1 cycle = 1/440 s
+    const defaultEngine = new AudioEngine({ playMode: 'burst' }, mockCtx);
+    expect(defaultEngine.getBurstActiveDuration()).toBeCloseTo(1 / 440, 6);
+  });
+
+  it('calculates cycle-based burst duration with multiple cycles', () => {
+    const engine = new AudioEngine(
+      {
+        playMode: 'burst',
+        burstUnit: 'cycles',
+        burstCycles: 10,
+        frequency: 500,
+      },
+      mockCtx
+    );
+    // 10 cycles at 500 Hz = 10 / 500 = 0.02 s (20 ms)
+    expect(engine.getBurstActiveDuration()).toBeCloseTo(0.02, 6);
+  });
+
+  it('calculates burst duration in sweep mode using average frequency', () => {
+    const engine = new AudioEngine(
+      {
+        waveform: 'sweep',
+        playMode: 'burst',
+        burstUnit: 'cycles',
+        burstCycles: 4,
+        sweepStartFreq: 200,
+        sweepEndFreq: 600, // Average freq: (200 + 600) / 2 = 400 Hz
+      },
+      mockCtx
+    );
+    // 4 cycles at 400 Hz avg = 4 / 400 = 0.01 s
+    expect(engine.getBurstActiveDuration()).toBeCloseTo(0.01, 6);
+  });
+
+  it('returns burstActiveDuration when burstUnit is time', () => {
+    const engine = new AudioEngine(
+      {
+        playMode: 'burst',
+        burstUnit: 'time',
+        burstActiveDuration: 0.25,
+      },
+      mockCtx
+    );
+    expect(engine.getBurstActiveDuration()).toBe(0.25);
+  });
+
+  it('schedules fast ramp envelope in cycle-based burst playback', async () => {
+    const engine = new AudioEngine(
+      {
+        playMode: 'burst',
+        burstUnit: 'cycles',
+        burstCycles: 1,
+        frequency: 1000, // activeDuration = 0.001 s (1 ms)
+      },
+      mockCtx
+    );
+
+    await engine.play();
+    expect(engine.isPlaying).toBe(true);
+
+    // gateGain is created in play() - 2nd gain node after masterGain
+    const gateGain = mockCtx.createGain.mock.results[1]?.value;
+    expect(gateGain).toBeDefined();
+
+    // Ramp: Math.min(0.0005, 0.001 * 0.1) = 0.0001 s (0.1 ms)
+    const ramp = Math.min(0.0005, 0.001 * 0.1);
+    expect(ramp).toBe(0.0001);
+
+    // Verify linearRampToValueAtTime was called on gateGain
+    expect(gateGain.gain.linearRampToValueAtTime).toHaveBeenCalled();
+
+    engine.stop();
+  });
+
+  it('handles oneshot playback mode with cycle-based duration (1-wave default)', () => {
+    const engine = new AudioEngine(
+      {
+        playMode: 'oneshot',
+        oneshotUnit: 'cycles',
+        frequency: 1000,
+      },
+      mockCtx
+    );
+    // 1 cycle default at 1000 Hz = 0.001 s
+    expect(engine.getOneshotDuration()).toBeCloseTo(0.001, 6);
+
+    // Multiple cycles
+    engine.updateConfig({ burstCycles: 5 });
+    expect(engine.getOneshotDuration()).toBeCloseTo(0.005, 6);
+  });
+
+  it('handles oneshot playback mode with up to 600.0s (10 minutes) duration', () => {
+    const engine = new AudioEngine(
+      {
+        playMode: 'oneshot',
+        oneshotDuration: 600.0,
+      },
+      mockCtx
+    );
+    expect(engine.config.oneshotDuration).toBe(600.0);
+    expect(engine.getOneshotDuration()).toBe(600.0);
+
+    // Clamps to 600.0s max
+    engine.updateConfig({ oneshotDuration: 800.0 });
+    expect(engine.config.oneshotDuration).toBe(600.0);
+  });
+
+  it('handles sweep duration with up to 600.0s (10 minutes)', () => {
+    const engine = new AudioEngine(
+      {
+        waveform: 'sweep',
+        sweepDuration: 600.0,
+      },
+      mockCtx
+    );
+    expect(engine.config.sweepDuration).toBe(600.0);
+
+    // Clamps to 600.0s max
+    engine.updateConfig({ sweepDuration: 1000.0 });
+    expect(engine.config.sweepDuration).toBe(600.0);
   });
 
   it('handles oneshot playback mode and onStop callback', async () => {
