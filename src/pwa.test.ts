@@ -45,11 +45,10 @@ describe('PWA Assets and Configuration', () => {
     const html = readFileSync(htmlPath, 'utf-8');
     expect(html).toContain('viewport-fit=cover');
     expect(html).toContain('name="theme-color" content="#090d16"');
-    expect(html).toContain('<title>Sound Wave Synthesis Studio | swsswwssswww (for WatanabeShinichiro)</title>');
+    expect(html).toContain('<title>Sound Wave Synthesis Studio | swsswwssswww</title>');
     expect(html).toContain('name="application-name" content="Sound Wave Synthesis Studio"');
     expect(html).toContain('name="apple-mobile-web-app-title" content="Sound Wave Synthesis Studio"');
     expect(html).toContain('swsswwssswww');
-    expect(html).toContain('WatanabeShinichiro');
     expect(html).toContain('name="apple-mobile-web-app-capable" content="yes"');
     expect(html).toContain('rel="apple-touch-icon"');
     expect(html).toContain('rel="icon" type="image/svg+xml" href="/favicon.svg"');
@@ -58,8 +57,8 @@ describe('PWA Assets and Configuration', () => {
   it('vite.config.ts contains updated PWA manifest metadata', () => {
     const viteConfigPath = resolve(root, 'vite.config.ts');
     const config = readFileSync(viteConfigPath, 'utf-8');
-    expect(config).toContain("name: 'swsswwssswww - Sound Wave Super Synthesizer (for WatanabeShinichiro)'");
+    expect(config).toContain("name: 'swsswwssswww - Sound Wave Synthesis Studio'");
     expect(config).toContain("short_name: 'Sound Wave Synthesis Studio'");
-    expect(config).toContain("description: 'Sound Wave Super Synthesizer — Waveform Workflow, Signal Sequencing Studio — World Wide Web (for WatanabeShinichiro)'");
+    expect(config).toContain("description: 'Sound Wave Super Synthesizer — Waveform Workflow, Signal Sequencing Studio — World Wide Web'");
   });
 });

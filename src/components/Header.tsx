@@ -78,8 +78,7 @@ export const Header: React.FC<HeaderProps> = ({
               </span>
             </div>
             <p className="text-[11px] sm:text-xs text-slate-400 font-mono tracking-tight leading-tight mt-0.5">
-              <span>Sound Wave Super Synthesizer — Waveform Workflow, Signal Sequencing Studio — World Wide Web</span>{' '}
-              <span className="text-emerald-400 font-sans font-medium whitespace-nowrap">(for WatanabeShinichiro)</span>
+              <span>Sound Wave Super Synthesizer — Waveform Workflow, Signal Sequencing Studio — World Wide Web</span>
             </p>
           </div>
         </div>
