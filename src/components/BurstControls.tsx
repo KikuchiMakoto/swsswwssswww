@@ -454,7 +454,7 @@ export const BurstControls: React.FC<BurstControlsProps> = ({
 };
 
 export interface OneShotControlsProps {
-  duration: number; // in seconds, up to 600.0s (10分)
+  duration: number; // in seconds, up to 1000.0s
   unit?: 'time' | 'cycles';
   cycles?: number;
   frequency?: number;
@@ -471,9 +471,9 @@ const ONESHOT_TIME_PRESETS = [
   { label: '10秒', value: 10.0 },
   { label: '30秒', value: 30.0 },
   { label: '1分', value: 60.0 },
-  { label: '3分', value: 180.0 },
   { label: '5分', value: 300.0 },
-  { label: '10分 (600s)', value: 600.0 },
+  { label: '600秒 (10分)', value: 600.0 },
+  { label: '1000秒', value: 1000.0 },
 ];
 
 const ONESHOT_CYCLE_PRESETS = [
@@ -530,7 +530,7 @@ export const OneShotControls: React.FC<OneShotControlsProps> = ({
   const commitDuration = (valStr: string) => {
     const val = parseFloat(valStr);
     if (!isNaN(val)) {
-      const clamped = Math.round(clamp(val, 0.05, 600.0) * 100) / 100;
+      const clamped = Math.round(clamp(val, 0.05, 1000.0) * 100) / 100;
       handleDurationUpdate(clamped);
       setDurationInput(clamped.toString());
     } else {
@@ -564,7 +564,7 @@ export const OneShotControls: React.FC<OneShotControlsProps> = ({
         </div>
       </div>
 
-      {/* Dual Unit Toggle: [ 秒数・時間指定 (最大10分) ] vs [ 波数指定 (パルス単発) ] */}
+      {/* Dual Unit Toggle: [ 秒数・時間指定 (最大1000秒) ] vs [ 波数指定 (パルス単発) ] */}
       <div className="grid grid-cols-2 gap-1.5 p-1 bg-slate-950/80 rounded-xl border border-slate-800/80">
         <button
           type="button"
@@ -577,7 +577,7 @@ export const OneShotControls: React.FC<OneShotControlsProps> = ({
           }`}
         >
           <Clock className="w-3.5 h-3.5" />
-          <span>秒数・時間指定 (最大10分)</span>
+          <span>秒数・時間指定 (最大1000秒)</span>
         </button>
         <button
           type="button"
@@ -614,7 +614,7 @@ export const OneShotControls: React.FC<OneShotControlsProps> = ({
                 id="oneshot-duration-input"
                 type="number"
                 min="0.05"
-                max="600.0"
+                max="1000.0"
                 step="0.1"
                 value={durationInput}
                 disabled={disabled}
@@ -640,10 +640,10 @@ export const OneShotControls: React.FC<OneShotControlsProps> = ({
             min="0"
             max="100"
             step="0.1"
-            value={durationToSlider(duration, 0.05, 600.0)}
+            value={durationToSlider(duration, 0.05, 1000.0)}
             disabled={disabled}
             onChange={(e) => {
-              const sec = sliderToDuration(parseFloat(e.target.value), 0.05, 600.0);
+              const sec = sliderToDuration(parseFloat(e.target.value), 0.05, 1000.0);
               handleDurationUpdate(sec);
             }}
             aria-label="単発発振時間スライダー"
@@ -654,10 +654,10 @@ export const OneShotControls: React.FC<OneShotControlsProps> = ({
             <span>1秒</span>
             <span>10秒</span>
             <span>1分</span>
-            <span>10分 (600s)</span>
+            <span>1000秒</span>
           </div>
 
-          {/* Quick presets: [1秒], [5秒], [10秒], [30秒], [1分], [3分], [5分], [10分 (600s)] */}
+          {/* Quick presets: [1秒], [5秒], [10秒], [30秒], [1分], [5分], [600秒 (10分)], [1000秒] */}
           <div className="space-y-1">
             <div className="text-[10px] text-slate-400 font-medium">クイックプリセット</div>
             <div className="flex flex-wrap gap-1.5">

@@ -235,35 +235,35 @@ describe('AudioEngine', () => {
     expect(engine.getOneshotDuration()).toBeCloseTo(0.005, 6);
   });
 
-  it('handles oneshot playback mode with up to 600.0s (10 minutes) duration', () => {
+  it('handles oneshot playback mode with up to 1000.0s duration', () => {
     const engine = new AudioEngine(
       {
         playMode: 'oneshot',
-        oneshotDuration: 600.0,
+        oneshotDuration: 1000.0,
       },
       mockCtx
     );
-    expect(engine.config.oneshotDuration).toBe(600.0);
-    expect(engine.getOneshotDuration()).toBe(600.0);
+    expect(engine.config.oneshotDuration).toBe(1000.0);
+    expect(engine.getOneshotDuration()).toBe(1000.0);
 
-    // Clamps to 600.0s max
-    engine.updateConfig({ oneshotDuration: 800.0 });
-    expect(engine.config.oneshotDuration).toBe(600.0);
+    // Clamps to 1000.0s max
+    engine.updateConfig({ oneshotDuration: 1200.0 });
+    expect(engine.config.oneshotDuration).toBe(1000.0);
   });
 
-  it('handles sweep duration with up to 600.0s (10 minutes)', () => {
+  it('handles sweep duration with up to 1000.0s', () => {
     const engine = new AudioEngine(
       {
         waveform: 'sweep',
-        sweepDuration: 600.0,
+        sweepDuration: 1000.0,
       },
       mockCtx
     );
-    expect(engine.config.sweepDuration).toBe(600.0);
+    expect(engine.config.sweepDuration).toBe(1000.0);
 
-    // Clamps to 600.0s max
-    engine.updateConfig({ sweepDuration: 1000.0 });
-    expect(engine.config.sweepDuration).toBe(600.0);
+    // Clamps to 1000.0s max
+    engine.updateConfig({ sweepDuration: 1200.0 });
+    expect(engine.config.sweepDuration).toBe(1000.0);
   });
 
   it('handles oneshot playback mode and onStop callback', async () => {

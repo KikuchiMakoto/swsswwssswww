@@ -59,12 +59,12 @@ export function formatDuration(seconds: number): string {
 
 /**
  * Converts a duration in seconds to a slider percentage (0 to 100) using a logarithmic scale.
- * Supports non-linear duration adjustments across wide ranges (e.g. 0.05s to 600.0s).
+ * Supports non-linear duration adjustments across wide ranges (e.g. 0.05s to 1000.0s).
  */
 export function durationToSlider(
   duration: number,
   minSec: number = 0.05,
-  maxSec: number = 600.0
+  maxSec: number = 1000.0
 ): number {
   const safeDur = clamp(duration, minSec, maxSec);
   const minLog = Math.log10(minSec);
@@ -79,7 +79,7 @@ export function durationToSlider(
 export function sliderToDuration(
   percentage: number,
   minSec: number = 0.05,
-  maxSec: number = 600.0
+  maxSec: number = 1000.0
 ): number {
   const safePct = clamp(percentage, 0, 100) / 100;
   const minLog = Math.log10(minSec);

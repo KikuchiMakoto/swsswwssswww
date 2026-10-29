@@ -134,12 +134,12 @@ describe('clampAudioConfig', () => {
     expect(clamped.sweepEndFreq).toBe(20000);
   });
 
-  it('clamps sweep duration within [0.1, 600.0]', () => {
+  it('clamps sweep duration within [0.1, 1000.0]', () => {
     const low = clampAudioConfig({ sweepDuration: 0.02 });
     expect(low.sweepDuration).toBe(0.1);
 
-    const high = clampAudioConfig({ sweepDuration: 700.0 });
-    expect(high.sweepDuration).toBe(600.0);
+    const high = clampAudioConfig({ sweepDuration: 1200.0 });
+    expect(high.sweepDuration).toBe(1000.0);
 
     const valid = clampAudioConfig({ sweepDuration: 300.0 });
     expect(valid.sweepDuration).toBe(300.0);
@@ -161,12 +161,12 @@ describe('clampAudioConfig', () => {
     expect(high.burstPauseDuration).toBe(5.0);
   });
 
-  it('clamps oneshot duration within [0.05, 600.0]', () => {
+  it('clamps oneshot duration within [0.05, 1000.0]', () => {
     const low = clampAudioConfig({ oneshotDuration: 0.01 });
     expect(low.oneshotDuration).toBe(0.05);
 
-    const high = clampAudioConfig({ oneshotDuration: 800 });
-    expect(high.oneshotDuration).toBe(600.0);
+    const high = clampAudioConfig({ oneshotDuration: 1200 });
+    expect(high.oneshotDuration).toBe(1000.0);
 
     const valid = clampAudioConfig({ oneshotDuration: 300.0 });
     expect(valid.oneshotDuration).toBe(300.0);
@@ -295,6 +295,7 @@ describe('formatDuration helper', () => {
   it('formats durations >= 60 seconds correctly', () => {
     expect(formatDuration(60)).toBe('1分00秒 (60.0s)');
     expect(formatDuration(600)).toBe('10分00秒 (600.0s)');
+    expect(formatDuration(1000)).toBe('16分40秒 (1000.0s)');
     expect(formatDuration(180)).toBe('3分00秒 (180.0s)');
     expect(formatDuration(300)).toBe('5分00秒 (300.0s)');
     expect(formatDuration(65)).toBe('1分05秒 (65.0s)');
@@ -320,27 +321,27 @@ describe('formatDuration helper', () => {
 
 describe('duration slider mapping (logarithmic)', () => {
   it('maps boundary durations correctly', () => {
-    expect(durationToSlider(0.05, 0.05, 600)).toBe(0);
-    expect(durationToSlider(600, 0.05, 600)).toBe(100);
+    expect(durationToSlider(0.05, 0.05, 1000)).toBe(0);
+    expect(durationToSlider(1000, 0.05, 1000)).toBe(100);
 
-    expect(sliderToDuration(0, 0.05, 600)).toBe(0.05);
-    expect(sliderToDuration(100, 0.05, 600)).toBe(600);
+    expect(sliderToDuration(0, 0.05, 1000)).toBe(0.05);
+    expect(sliderToDuration(100, 0.05, 1000)).toBe(1000);
   });
 
   it('distributes common durations well across the slider', () => {
-    // 1.0s should be around 30-35%
-    const slider1s = durationToSlider(1.0, 0.05, 600);
+    // 1.0s should be around 25-35%
+    const slider1s = durationToSlider(1.0, 0.05, 1000);
     expect(slider1s).toBeGreaterThan(25);
-    expect(slider1s).toBeLessThan(40);
+    expect(slider1s).toBeLessThan(35);
 
     // 10s should be around 50-60%
-    const slider10s = durationToSlider(10.0, 0.05, 600);
+    const slider10s = durationToSlider(10.0, 0.05, 1000);
     expect(slider10s).toBeGreaterThan(50);
-    expect(slider10s).toBeLessThan(65);
+    expect(slider10s).toBeLessThan(60);
 
-    // 60s should be around 70-80%
-    const slider60s = durationToSlider(60.0, 0.05, 600);
+    // 60s should be around 70-75%
+    const slider60s = durationToSlider(60.0, 0.05, 1000);
     expect(slider60s).toBeGreaterThan(70);
-    expect(slider60s).toBeLessThan(80);
+    expect(slider60s).toBeLessThan(75);
   });
 });

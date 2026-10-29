@@ -32,7 +32,8 @@ const SWEEP_DURATION_PRESETS = [
   { label: '30秒', value: 30.0 },
   { label: '1分', value: 60.0 },
   { label: '5分', value: 300.0 },
-  { label: '10分 (600s)', value: 600.0 },
+  { label: '600秒 (10分)', value: 600.0 },
+  { label: '1000秒', value: 1000.0 },
 ];
 
 export const SweepControls: React.FC<SweepControlsProps> = ({
@@ -233,7 +234,7 @@ export const SweepControls: React.FC<SweepControlsProps> = ({
 
       {/* Sweep Duration & Scale Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-        {/* Sweep Duration (0.1s - 600.0s / 10分) */}
+        {/* Sweep Duration (0.1s - 1000.0s) */}
         <div className="space-y-2.5 p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5 flex-wrap">
@@ -295,10 +296,10 @@ export const SweepControls: React.FC<SweepControlsProps> = ({
             <span>1秒</span>
             <span>10秒</span>
             <span>1分</span>
-            <span>10分 (600s)</span>
+            <span>1000秒</span>
           </div>
 
-          {/* Quick presets: [1秒], [2秒], [5秒], [10秒], [30秒], [1分], [5分], [10分 (600s)] */}
+          {/* Quick presets: [1秒], [2秒], [5秒], [10秒], [30秒], [1分], [5分], [600秒 (10分)], [1000秒] */}
           <div className="space-y-1 pt-1">
             <div className="text-[10px] text-slate-400 font-medium">クイックプリセット</div>
             <div className="flex flex-wrap gap-1.5">

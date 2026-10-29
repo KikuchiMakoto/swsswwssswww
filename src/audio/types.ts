@@ -8,7 +8,7 @@ export interface AudioConfig {
   frequency: number; // 20 to 20000, default 440
   sweepStartFreq: number; // 20 to 20000, default 100
   sweepEndFreq: number; // 20 to 20000, default 10000
-  sweepDuration: number; // 0.1 to 600.0 s, default 2.0
+  sweepDuration: number; // 0.1 to 1000.0 s, default 2.0
   sweepScale: SweepScale; // default 'logarithmic'
   playMode: PlayMode; // default 'continuous'
   burstUnit: BurstUnit; // default 'cycles'
@@ -17,7 +17,7 @@ export interface AudioConfig {
   burstPauseDuration: number; // 0.01 to 5.0 s, default 0.2
   oneshotUnit?: 'time' | 'cycles'; // default 'time'
   oneshotCycles?: number; // 1 to 10000, optional
-  oneshotDuration: number; // 0.05 to 600.0 s, default 1.0
+  oneshotDuration: number; // 0.05 to 1000.0 s, default 1.0
   volume: number; // 0 to 1.0, default 0.5
   muted: boolean; // default false
 }
@@ -43,10 +43,10 @@ export const AUDIO_BOUNDS = {
   frequency: { min: 20, max: 20000 },
   sweepStartFreq: { min: 20, max: 20000 },
   sweepEndFreq: { min: 20, max: 20000 },
-  sweepDuration: { min: 0.1, max: 600.0 },
+  sweepDuration: { min: 0.1, max: 1000.0 },
   burstCycles: { min: 1, max: 10000 },
   burstActiveDuration: { min: 0.001, max: 5.0 },
   burstPauseDuration: { min: 0.01, max: 5.0 },
-  oneshotDuration: { min: 0.05, max: 600.0 },
+  oneshotDuration: { min: 0.05, max: 1000.0 },
   volume: { min: 0, max: 1.0 },
 } as const;
